@@ -6,14 +6,35 @@ import dotenv from "dotenv"
 // import { DB_NAME } from "./constants";
 
 import connectDB from "./db/index.js";
+import { connect } from "mongoose";
 
 dotenv.config({
     path:`./env`
 })
 
 
+Port = process.env.PORT || 8000;
 
+// we write async method for database so whenever async method is completed
+// a Promise will return //this is common in code bases
+
+// so whenever Db is connected 
 connectDB()
+.then(()=>{
+
+    //for error listing
+    app.on("Error",(error)=>{
+        console.error("Error!! ", error);
+    })
+
+    app.listen(port,() => {
+        console.log(`server is running,${Port}`);
+        
+    })
+})
+.catch((error) => {
+     console.log("DB Connection is Failed !!!",error);
+})
 
 
 
