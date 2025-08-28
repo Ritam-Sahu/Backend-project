@@ -13,7 +13,7 @@ dotenv.config({
 })
 
 
-Port = process.env.PORT || 8000;
+const Port = process.env.PORT || 8000;
 
 // we write async method for database so whenever async method is completed
 // a Promise will return //this is common in code bases
@@ -27,7 +27,7 @@ connectDB()
         console.error("Error!! ", error);
     })
 
-    app.listen(port,() => {
+    app.listen(Port,() => {
         console.log(`server is running,${Port}`);
         
     })
