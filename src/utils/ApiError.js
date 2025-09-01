@@ -37,3 +37,17 @@ export { ApiError }
 // Later, the error-handling middleware checks if the error is an ApiError and formats the response.
 
 // So → ApiError is a utility (class), not middleware.
+
+
+
+
+
+
+
+
+
+// this.stack = stack: lets you manually set a stack trace
+// (rarely needed, but useful in custom debugging).
+
+// Error.captureStackTrace(this, this.constructor): automatically generates
+// a clean stack trace starting from where the error was thrown, ignoring the constructor.
