@@ -53,7 +53,7 @@ const registerUser = asyncHandeller(async (req, res) => {
 
 
     // check if user already  exits : username and email
-    const exitedUser = User.findOne({
+    const exitedUser = await User.findOne({
         $or: [{ username }, { email }]
     })
 
@@ -61,10 +61,18 @@ const registerUser = asyncHandeller(async (req, res) => {
         throw new ApiError(409, "user with email or username already exits ")
     }
 
+    // console.log(req.files);
+    
+
     //midlleware give acces to files
     // (?.) is used if present(optional)
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+
+    let coverImageLocalPath;
+    if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0){
+        coverImageLocalPath = req.files.coverImage[0].path;
+    }
 
     // check for images, check for avtar
     if(!avatarLocalPath){
