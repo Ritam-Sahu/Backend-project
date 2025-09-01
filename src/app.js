@@ -35,4 +35,23 @@ app.use(express.static("public"))
 app.use(cookieParser())
 
 
-export { app }
+
+
+
+
+
+//routes import
+import userRouter from './routes/user.routes.js'
+
+
+//routes declartion
+// app.use("/users", userRouter)    //this is ok but we use professional
+app.use("/api/v1/users", userRouter)
+// http://localhost:8000/api/v1/users
+
+
+export default app; 
+
+
+//use Postman
+// Postman 🚀 is a popular API testing and development tool
