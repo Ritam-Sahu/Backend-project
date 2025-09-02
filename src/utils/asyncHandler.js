@@ -3,7 +3,9 @@
 //helper file 
 const asyncHandeller = (requestHandler) =>{
     return (req,res,next) => {
+        // Convert requestHandler result into a Promise
         Promise.resolve(requestHandler(req,res,next))
+        // If it rejects, catch the error and pass to next()
         .catch((err)=>next(err))
     }
 }
@@ -15,15 +17,15 @@ export { asyncHandeller };
 
 // 🔹 What it means
 
-// asyncHandeller is a Higher-Order Function
-// It takes a function (requestHandler) as input.
-// Returns another function (req,res,next) for Express.
-// Wraps your async route handlers
-// Normally, in Express, if an async function throws an error, you must try/catch it.
-// This wrapper automatically catches errors (using Promise.resolve(...).catch(...)).
-// Forwards errors to Express
-// Instead of crashing, it passes the error to next(err).
-// Then your global error middleware can handle it.
+// ==============================================
+// asyncHandler (higher-order function)
+// ----------------------------------------------
+// Purpose: 
+// - To handle errors in async route handlers/controllers
+// - Wraps the given async function (requestHandler)
+// - Automatically catches rejected Promises (errors) 
+//   and forwards them to Express error middleware
+// ==============================================
 
 
 
