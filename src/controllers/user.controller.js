@@ -369,7 +369,147 @@ const refreshAccessToken = asyncHandeller(async (req, res) =>{
 
 
 
-export { registerUser, loginUser, logOutUser, refreshAccessToken };
+
+
+
+const changeCurrentPassword = asyncHandeller(async (req, res)=>{
+
+    // Get old and new passwords from request body
+    const {oldPassword , newPassword} = req.body;
+    
+    // Find the current logged-in user by ID (from auth middleware)
+    const user = await User.findById(req.user?._id);
+
+    // Check if the old password is correct
+    const isPasswordCorrect =  await user.isPasswordCorrect(oldPassword);
+
+    if(!isPasswordCorrect){
+        throw new ApiError(400, "Invalid old password")
+    }
+
+    // Update the password with the new one
+    user.password = newPassword
+
+    // Save the updated user object to database
+    // This triggers the pre-save hook (for password hashing)
+    // { validateBeforeSave: false } skips validation for fields unrelated to the password.
+    await user.save({validateBeforeSave: false})
+
+    // Send a success response
+    return res
+    .status(200)
+    .json(new ApiResponse (200,{},"Password Changed succesfully") )
+})
+
+
+
+const getCurrentUser = asyncHandeller(async(req, res)=>{
+    return res
+    .status(200)
+    .json(200,req.user, "current User Fetched Successfully")
+})
+
+
+
+
+const updateAccountDetails = asyncHandeller(async (req, res)=>{
+
+    // Extract fullname and email from request body
+    const {fullname,email}  = req.body;
+
+    // Validate that both fullname and email are provided
+    if(!fullname || !email){
+        throw new ApiError(400,"all fileds are required")
+    }
+
+    // Update the user's fullname and email by their ID
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,  // Get currently authenticated user's ID from request
+        {
+            $set: { // Set new values for fullname and email
+                fullname: fullname,
+                email: email
+            }
+        },
+        {new: true} // Return the updated document
+    ).select("-password") // Exclude the password from the returned user object
+
+    // Handle case when user is not found in the database
+    if (!user) {
+        throw new ApiError(404, "user not Found")
+    }
+
+    // return the response
+    return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Account details updated successfully"))
+})
+
+
+const updateUserAvatar = asyncHandeller(async(req, res)=>{
+
+    const avatarLocalPath = req.file?.path
+
+    if(!avatarLocalPath){
+        throw new ApiError(400,"avatar file is Missing")
+    }
+
+    const avatar =  await uploadOnCloudinary(avatarLocalPath);
+
+    if(!avatar.url){
+        throw new ApiError(400, "Error While uploading")
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                avatar: avatar.url
+            }
+        },
+        {new: true}
+    ).select("-password")
+
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Avatar Upload Succesfully" ))
+})
+
+
+const updateUserCoverImage = asyncHandeller(async(req, res)=>{
+
+    const coverImageLocalPath = req.file?.path
+
+    if(coverImageLocalPath){
+        throw new ApiError(400,"Cover Image file is Missing")
+    }
+
+    const coverImage =  await uploadOnCloudinary(coverImageLocalPath);
+
+    if(!coverImage.url){
+        throw new ApiError(400, "Error While uploading")
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                coverImage: coverImage.url
+            }
+        },
+        {new: true}
+    ).select("-password")
+
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Cover Image Upload Succesfully" ))
+})
+
+
+
+export { registerUser, loginUser, logOutUser, refreshAccessToken, changeCurrentPassword, getCurrentUser, updateAccountDetails,updateUserAvatar, updateUserCoverImage };
 
 
 
@@ -379,6 +519,37 @@ export { registerUser, loginUser, logOutUser, refreshAccessToken };
 // instead of
 // const email = req.body.email;
 // const password = req.body.password;
+
+
+
+
+
+
+
+// Here’s the simple distinction between User and user in your Node.js + Mongoose app:
+
+// User (with uppercase “U”):
+// Refers to the Mongoose Model.
+// Used for database-level operations like querying, creating, updating, deleting documents.
+// const userFromDb = await User.findById(id);
+// const newUser = await User.create({...});
+
+
+
+// user (with lowercase “u”):
+// Refers to an instance of the User document, retrieved from the database.
+// It represents a single user object, with fields like user.email, user.password, etc.
+// You can also call custom instance methods on it:
+// const isValid = await user.isPasswordCorrect(password);
+// user.password = newPassword;
+// await user.save();
+
+
+
+
+
+
+
 
 
 

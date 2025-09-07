@@ -25,7 +25,6 @@ router.route("/login").post(loginUser)
 //secured route
 router.route("/logout").post(verifyJWT, logOutUser)
 
-router.route("/refresh-toke").post(refreshAccessToken)
 
 export default router;
 
@@ -33,3 +32,11 @@ export default router;
 
 // http://localhos:8000/users/register
 // http://localhos:8000/users/login
+
+
+
+
+
+
+// Whenever you update image/files, you create a separate controller/endpoint to keep file handling logic isolated from other operations, ensuring single responsibility.
+// This improves code clarity, easier debugging, and avoids mixing file upload logic with unrelated business logic
