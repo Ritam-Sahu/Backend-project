@@ -7,7 +7,7 @@ const router = Router();
 
 // Route for registering a new user
 router.route("/register").post(
-    // 1️⃣ Middleware for handling file uploads
+    // Multer middleware to handle file uploads (avatar + coverImage)
     upload.fields([
         {
             name: "avatar",
@@ -17,7 +17,7 @@ router.route("/register").post(
             name: "coverImage",
             maxCount: 1
         }]),
-    // 2️⃣ Actual controller that handles user registration
+    // Actual controller that handles user registration
     registerUser)
 
 router.route("/login").post(loginUser)
