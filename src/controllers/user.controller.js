@@ -406,7 +406,7 @@ const changeCurrentPassword = asyncHandeller(async (req, res)=>{
 const getCurrentUser = asyncHandeller(async(req, res)=>{
     return res
     .status(200)
-    .json(200,req.user, "current User Fetched Successfully")
+    .json(new ApiResponse (200,req.user, "current User Fetched Successfully"))
 })
 
 
