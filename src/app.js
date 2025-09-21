@@ -55,3 +55,8 @@ export default app;
 
 //use Postman
 // Postman 🚀 is a popular API testing and development tool
+
+// app.use() in Express is used to mount middleware or routers. 
+// If no path is given, the middleware runs for every request. 
+// It’s commonly used for logging, authentication, error handling, 
+// parsing JSON, or mounting route files in production apps."
